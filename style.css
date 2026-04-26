@@ -1,0 +1,153 @@
+/* --- LIGHT BLUE THEME --- */
+        :root {
+            --primary: #0277bd;      /* Deep light blue */
+            --secondary: #00b0ff;    /* Bright accent blue */
+            --bg-color: #e1f5fe;     /* Very pale blue background */
+            --card-bg: #ffffff;      /* White slides */
+            --text-main: #01579b;    /* Dark blue text */
+            --text-muted: #546e7a;   /* Gray-blue for secondary text */
+            --code-bg: #263238;      /* Dark background for Java code */
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* --- SLIDE CONTAINER --- */
+        .presentation-container {
+            width: 90vw;
+            height: 85vh;
+            position: relative;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(2, 119, 189, 0.15);
+            padding: 50px;
+            box-sizing: border-box;
+            animation: fadeIn 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: absolute;
+            top: 0;
+            left: 0;
+            flex-direction: column;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1 { font-size: 3.5rem; margin-bottom: 10px; color: var(--primary); }
+        h2 { font-size: 2.2rem; margin-bottom: 20px; color: var(--secondary); border-bottom: 2px solid var(--bg-color); padding-bottom: 10px;}
+        h3 { font-size: 1.5rem; color: var(--primary); }
+        p, li { font-size: 1.3rem; line-height: 1.8; color: var(--text-muted); }
+        ul { margin-left: 20px; }
+
+        .center-content {
+            text-align: center;
+            margin: auto;
+        }
+
+        /* --- CONTROLS & PROGRESS --- */
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            background: var(--primary);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(2, 119, 189, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 176, 255, 0.4);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 6px;
+            background: var(--secondary);
+            transition: width 0.4s ease;
+            z-index: 100;
+        }
+
+        /* --- INTERACTIVE TREE ANIMATION --- */
+        .tree-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: var(--bg-color);
+            border-radius: 10px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .node {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .anim-btn {
+            background: var(--secondary);
+            margin-top: 20px;
+            font-size: 1rem;
+            padding: 10px 20px;
+        }
+
+        /* --- CODE BLOCKS --- */
+        pre {
+            background: var(--code-bg);
+            color: #80cbc4;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            overflow-x: auto;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .code-keyword { color: #c792ea; }
+        .code-type { color: #ffcb6b; }
+        .code-comment { color: #546e7a; font-style: italic; }

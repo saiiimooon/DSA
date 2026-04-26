@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group 5: AVL Tree & Rebalancing</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="presentation-container">
+
+        <div class="slide active center-content">
+            <h1>AVL Tree & Rebalancing</h1>
+            <h2 style="border:none; color: var(--text-muted);">The Self-Balancing Binary Search Tree</h2>
+            <br>
+            <p><strong>Presented by: Group 5</strong></p>
+            <p>A deep dive into structure, rotations, and Java implementation.</p>
+        </div>
+
+        <div class="slide">
+            <h2>Understanding the AVL Tree</h2>
+            <p>An AVL Tree (named after Adelson-Velsky and Landis) solves the biggest problem of a standard Binary Search Tree: <strong>skewing</strong>. It enforces a strict rule to ensure search times always remain lightning-fast.</p>
+            
+            <div style="display: flex; gap: 40px; margin-top: 20px;">
+                <div style="flex: 1; background: var(--bg-color); padding: 20px; border-radius: 10px;">
+                    <h3>The Balance Factor (BF)</h3>
+                    <p>Every node calculates its tilt:<br>
+                    <strong>BF = Height(Left) - Height(Right)</strong></p>
+                    <p>A node is balanced only if its BF is <strong>-1, 0, or 1</strong>.</p>
+                </div>
+                <div style="flex: 1; background: var(--bg-color); padding: 20px; border-radius: 10px;">
+                    <h3>The Rule of One</h3>
+                    <p>If any node's Balance Factor hits <strong>2</strong> or <strong>-2</strong>, the tree is officially imbalanced. The algorithm immediately pauses to perform a <strong>Rotation</strong> to level it out.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>Single Rotations: LL & RR</h2>
+            <p>Used when the nodes form a heavy straight line. Click the button to watch the "Right Rotation" pull the middle node to the root.</p>
+            
+            <button class="anim-btn" onclick="animateLL()">Simulate LL Case (Right Rotation)</button>
+            <button class="anim-btn" style="background:#b0bec5; color:black;" onclick="resetLL()">Reset</button>
+
+            <div class="tree-container">
+                <div class="node" id="n30" style="top: 20px; left: 50%;">30</div>
+                <div class="node" id="n20" style="top: 100px; left: 40%;">20</div>
+                <div class="node" id="n10" style="top: 180px; left: 30%;">10</div>
+            </div>
+            <p id="ll-text" style="text-align: center; margin-top: 10px; font-weight: bold;">Imbalance at Node 30 (BF = +2)</p>
+        </div>
+
+        <div class="slide">
+            <h2>Double Rotations: LR & RL</h2>
+            <p>Used when the imbalance forms a "Zig-Zag". We first rotate the child to form a straight line, then rotate the parent.</p>
+
+            <button class="anim-btn" onclick="animateLR_Step1()">Step 1: Left Rotate Child</button>
+            <button class="anim-btn" onclick="animateLR_Step2()">Step 2: Right Rotate Parent</button>
+            <button class="anim-btn" style="background:#b0bec5; color:black;" onclick="resetLR()">Reset</button>
+
+            <div class="tree-container">
+                <div class="node" id="lr30" style="top: 20px; left: 50%;">30</div>
+                <div class="node" id="lr10" style="top: 100px; left: 35%;">10</div>
+                <div class="node" id="lr20" style="top: 180px; left: 45%;">20</div>
+            </div>
+            <p id="lr-text" style="text-align: center; margin-top: 10px; font-weight: bold;">Left-Right Case: Imbalance at Node 30</p>
+        </div>
+
+        <div class="slide">
+            <h2>Java Implementation: The Node & Rotation</h2>
+            <p>To code this, we create a Node class that tracks height, and a method that physically swaps the pointers during a rotation.</p>
+            <pre>
+<span class="code-keyword">class</span> <span class="code-type">Node</span> {
+    <span class="code-keyword">int</span> key, height;
+    <span class="code-type">Node</span> left, right;
+    
+    <span class="code-type">Node</span>(<span class="code-keyword">int</span> d) {
+        key = d;
+        height = 1;
+    }
+}
+
+<span class="code-comment">// Right Rotation (LL Case Fix)</span>
+<span class="code-type">Node</span> rightRotate(<span class="code-type">Node</span> y) {
+    <span class="code-type">Node</span> x = y.left;
+    <span class="code-type">Node</span> T2 = x.right;
+
+    <span class="code-comment">// Perform rotation</span>
+    x.right = y;
+    y.left = T2;
+
+    <span class="code-comment">// Update heights</span>
+    y.height = Math.max(height(y.left), height(y.right)) + 1;
+    x.height = Math.max(height(x.left), height(x.right)) + 1;
+
+    <span class="code-keyword">return</span> x; <span class="code-comment">// Return new root</span>
+}</pre>
+        </div>
+
+        <div class="slide">
+            <h2>Java Implementation: Insertion Logic</h2>
+            <p>Every time we insert, we update the height, check the Balance Factor, and trigger the correct rotation if necessary.</p>
+            <pre>
+<span class="code-type">Node</span> insert(<span class="code-type">Node</span> node, <span class="code-keyword">int</span> key) {
+    <span class="code-comment">/* 1. Normal BST insertion logic goes here */</span>
+
+    <span class="code-comment">/* 2. Update height & Get Balance Factor */</span>
+    node.height = 1 + Math.max(height(node.left), height(node.right));
+    <span class="code-keyword">int</span> balance = getBalance(node);
+
+    <span class="code-comment">// LL Case</span>
+    <span class="code-keyword">if</span> (balance > 1 && key < node.left.key) 
+        <span class="code-keyword">return</span> rightRotate(node);
+
+    <span class="code-comment">// LR Case</span>
+    <span class="code-keyword">if</span> (balance > 1 && key > node.left.key) {
+        node.left = leftRotate(node.left);
+        <span class="code-keyword">return</span> rightRotate(node);
+    }
+    <span class="code-keyword">return</span> node;
+}</pre>
+        </div>
+
+        <div class="slide">
+            <h2>Real-Life Applications</h2>
+            <p>Why do we use AVL trees in the real world? Because they guarantee an extremely fast <em>O(log n)</em> search time, regardless of how data is inserted.</p>
+            
+            <ul style="margin-top: 20px; display: flex; flex-direction: column; gap: 20px;">
+                <li><strong>🗄️ Databases:</strong> Used in internal systems and indexes where fast lookups are critical. A balanced tree ensures no search takes longer than necessary.</li>
+                <li><strong>🔍 Search Engines:</strong> Essential for maintaining sorted, easily accessible dictionaries of keywords and web indexing where millions of fast queries happen per second.</li>
+                <li><strong>💻 Large-Scale Memory Systems:</strong> Used by operating systems to keep track of available memory blocks perfectly balanced and sorted by size.</li>
+            </ul>
+        </div>
+
+        <div class="slide center-content">
+            <h1>Thank You!</h1>
+            <h2 style="border:none; color: var(--text-muted);">Any Questions?</h2>
+            <br>
+            <div style="background: var(--bg-color); padding: 30px; border-radius: 15px; display: inline-block;">
+                <h3 style="margin-top:0;">Summary for Group 5</h3>
+                <p style="margin-bottom:0;">AVL Trees = Binary Search Trees + Self-Correction.<br>Stay Balanced, Stay Fast.</p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button onclick="prevSlide()">❮ Previous</button>
+            <button onclick="nextSlide()">Next ❯</button>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
